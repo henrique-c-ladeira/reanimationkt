@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 type Props = {
@@ -12,21 +12,14 @@ type Props = {
 };
 
 export const AnimatedSelectable: React.FC<Props> = ({selected, onPress}) => {
-  const scale = useSharedValue(1);
-
-  useEffect(() => {
-    scale.value = withSpring(selected ? 1.2 : 1, {
-      damping: 5,
-      stiffness: 200,
-    });
-  }, [selected, scale]);
-
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [{scale: scale.value}],
-      backgroundColor: selected ? 'rgb(50,80,255)' : 'rgb(30,30,30)',
-    };
-  });
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [
+      {scale: withSpring(selected ? 1.2 : 1, {damping: 5, stiffness: 200})},
+    ],
+    backgroundColor: withTiming(selected ? 'blue' : 'black', {
+      duration: 1000,
+    }),
+  }));
 
   return (
     <Animated.View style={[styles.box, animatedStyles]}>
